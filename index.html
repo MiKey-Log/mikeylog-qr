@@ -5,60 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mikeylog - Monthly Log</title>
     <style>
-        body { margin: 0; background-color: #f8f9fa; color: #333; font-family: 'Hiragino Sans', 'Meiryo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        #card { text-align: center; border-left: 5px solid #000; padding: 40px; width: 80%; max-width: 400px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
+        /* フォントを元の明朝体（Times New Roman / Serif）に戻しました */
+        body { margin: 0; background-color: #f8f9fa; color: #333; font-family: 'Times New Roman', "MS PMincho", "Hiragino Mincho ProN", serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #card { text-align: center; border-left: 5px solid #000; padding: 40px; width: 80%; max-width: 400px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
         .fade { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 絵文字（イラスト）のスタイル */
-        .emoji { font-size: 50px; margin-bottom: 10px; display: block; }
-
         .date { font-size: 14px; letter-spacing: 2px; color: #999; margin-bottom: 20px; text-transform: uppercase; }
-        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        .msg-box { font-size: 22px; font-weight: 500; line-height: 1.6; min-height: 120px; display: flex; align-items: center; justify-content: center; }
         
-        /* ロゴ画像のスタイル */
-        .logo-container { margin-top: 30px; }
-        .logo-img { width: 120px; height: auto; opacity: 0.8; }
+        /* ロゴ画像用のスタイル */
+        .signature-logo { margin-top: 30px; }
+        .signature-logo img { max-width: 150px; height: auto; filter: grayscale(100%); opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div id="card">
     <div class="date">Special Message</div>
-    <div id="char-emoji" class="emoji">🤔</div>
     <div class="msg-box" id="char-msg">...</div>
-    
-    <div class="logo-container">
-        <img src="https://github.com/MiKey-Log.png" alt="MikeyLog Logo" class="logo-img">
+    <div class="signature-logo">
+        <img src="https://github.com/MiKey-Log.png" alt="MikeyLog Logo">
     </div>
 </div>
 
 <script>
-    const logs = [
-        { emoji: "👃", text: "さっきからずっと、隣の人の鼻息がリズムを刻んでいる。" },
-        { img: "🛍️", text: "「期間限定」という言葉に、人生の半分くらいを支配されている。" },
-        { emoji: "☔", text: "傘を持ってきた日に限って、雨が降らないのはなぜだろう。" },
-        { emoji: "👻", text: "今、あなたの後ろに誰か立っていますか？……あ、気のせいでした。" },
-        { emoji: "🍛", text: "昨日の晩ごはんが思い出せなくて、少しだけ自分に絶望している。" },
-        { emoji: "📱", text: "正直に言います。このQR、あなたが初めての読み取りかもしれません。" }
+    const messages = [
+        "さっきからずっと、隣の人の鼻息がリズムを刻んでいる。",
+        "「期間限定」という言葉に、人生の半分くらいを支配されている気がする。",
+        "傘を持ってきた日に限って、雨が降らないのはなぜだろう。",
+        "今、あなたの後ろに誰か立っていますか？……あ、気のせいでした。",
+        "昨日の晩ごはんが思い出せなくて、少しだけ自分に絶望している。",
+        "正直に言います。このQRコード、あなたが初めての読み取りかもしれません。"
     ];
 
     let i = 0;
     const msgBox = document.getElementById('char-msg');
-    const emojiBox = document.getElementById('char-emoji');
 
     function rotate() {
         msgBox.classList.remove('fade');
-        emojiBox.classList.remove('fade');
-        
         setTimeout(() => {
-            msgBox.textContent = logs[i].text;
-            emojiBox.textContent = logs[i].emoji;
-            
+            msgBox.textContent = messages[i];
             msgBox.classList.add('fade');
-            emojiBox.classList.add('fade');
-            i = (i + 1) % logs.length;
+            i = (i + 1) % messages.length;
         }, 50);
     }
 
