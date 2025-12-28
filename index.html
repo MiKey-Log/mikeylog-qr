@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mikeylog - Monthly Log</title>
     <style>
-        /* フォントをシュールな雰囲気の明朝体へ */
+        /* フォントはシュールな明朝体 */
         body { 
             margin: 0; 
             background-color: #f8f9fa; 
             color: #333; 
             font-family: 'Times New Roman', "MS PMincho", "Hiragino Mincho ProN", serif; 
             display: flex; 
+            flex-direction: column;
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
+            cursor: pointer;
+        }
+
+        /* 初回タップを促す案内 */
+        #audio-hint {
+            font-size: 10px;
+            color: #ccc;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
         #card { 
@@ -55,7 +65,6 @@
             justify-content: center; 
         }
         
-        /* ロゴ画像のスタイル（カラーはそのまま） */
         .signature-logo { 
             margin-top: 30px; 
         }
@@ -66,18 +75,20 @@
         }
     </style>
 </head>
-<body>
+<body onclick="enableAudio()">
 
-<div id="card">
-    <div class="date">Special Message</div>
-    
-    <div id="fade-target" class="fade-area">
-        <div class="msg-box" id="char-msg">...</div>
-        <div class="signature-logo">
-            <img src="https://github.com/MiKey-Log.png" alt="MikeyLog Logo">
+    <div id="audio-hint">TAP TO START SOUND</div>
+
+    <div id="card">
+        <div class="date">Special Message</div>
+        
+        <div id="fade-target" class="fade-area">
+            <div class="msg-box" id="char-msg">...</div>
+            <div class="signature-logo">
+                <img src="https://github.com/MiKey-Log.png" alt="MikeyLog Logo">
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     const messages = [
@@ -90,24 +101,56 @@
     ];
 
     let i = 0;
+    let audioContext = null;
     const msgBox = document.getElementById('char-msg');
     const fadeTarget = document.getElementById('fade-target');
+    const audioHint = document.getElementById('audio-hint');
+
+    // ブラウザの音制限を解除し、音を鳴らす準備
+    function enableAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioHint.style.display = 'none'; // タップされたら案内を消す
+            playTickSound(); // 初回確認音
+        }
+    }
+
+    // 電子音（ピッ）を生成する関数
+    function playTickSound() {
+        if (!audioContext) return;
+        
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.type = 'sine'; 
+        osc.frequency.setValueAtTime(1200, audioContext.currentTime); // 高めのピ音
+        
+        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.1);
+    }
 
     function rotate() {
+        // 音を鳴らす
+        playTickSound();
+
         // アニメーションをリセット
         fadeTarget.style.animation = 'none';
-        fadeTarget.offsetHeight; /* 擬似的なリロード */
+        fadeTarget.offsetHeight; 
         
         setTimeout(() => {
-            // メッセージを更新
             msgBox.textContent = messages[i];
-            // ロゴと一緒にフェードインを開始
             fadeTarget.style.animation = 'fadeIn 0.8s ease-in forwards';
             i = (i + 1) % messages.length;
         }, 50);
     }
 
-    // 4.5秒ごとに静かに切り替わる
+    // 4.5秒ごとに切り替え
     setInterval(rotate, 4500);
     rotate();
 </script>
