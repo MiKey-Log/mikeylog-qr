@@ -3,92 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog 隠れキャラ図鑑</title>
+    <title>mikeylog 秘密の部屋</title>
     <style>
-        body {
-            margin: 0;
-            background-color: #1a1a1a;
-            color: white;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+        body { margin: 0; background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        #card { text-align: center; border: 2px solid #0f0; padding: 20px; width: 85%; max-width: 320px; position: relative; background: #050505; }
+        
+        /* シュールな振動アニメーション */
+        .shake { animation: shake 0.1s infinite; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            50% { transform: translate(-1px, -2px) rotate(-1deg); }
+            100% { transform: translate(1px, -1px) rotate(1deg); }
         }
-        #card {
-            text-align: center;
-            padding: 30px;
-            border-radius: 20px;
-            background: linear-gradient(145deg, #222, #333);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 80%;
-            max-width: 350px;
-            transition: all 0.5s ease;
-        }
-        .character-img {
-            font-size: 80px;
-            margin-bottom: 20px;
-            display: block;
-            /* 画像を使う場合はここをimgタグへのスタイルに変更 */
-        }
-        h1 { font-size: 24px; margin: 10px 0; color: #00ffcc; }
-        p { font-size: 16px; color: #ccc; line-height: 1.5; }
-        .fade-in { animation: fadeIn 0.8s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+
+        .icon { font-size: 100px; margin: 20px 0; display: block; filter: drop-shadow(0 0 10px #0f0); }
+        .msg-box { background: #0f0; color: #000; font-weight: bold; padding: 5px; margin-top: 15px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .name-tag { position: absolute; top: -15px; left: 10px; background: #000; padding: 0 10px; border: 2px solid #0f0; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div id="card" class="fade-in">
-    <div id="char-icon" class="character-img">⚡</div>
-    <h1 id="char-name">読み込み中...</h1>
-    <p id="char-desc">隠れキャラを探しています</p>
+<div id="card" class="shake">
+    <div class="name-tag" id="char-name">SYSTEM ERROR</div>
+    <div id="char-icon" class="icon">💾</div>
+    <div class="msg-box" id="char-msg">読み込み中...</div>
 </div>
 
 <script>
-    // 隠れキャラのリスト（ここにアイデアを全部詰め込みます）
     const characters = [
-        { name: "ソレノイドくん", icon: "🔌", desc: "「カチッ！」という音が大好き。いつも誰かの鍵を開けたがっている。" },
-        { name: "デバッグ・ゴースト", icon: "👻", desc: "プログラムのバグを食べてくれる守護霊。たまに無限ループに迷い込む。" },
-        { name: "爆速Picoくん", icon: "🏎️", desc: "Raspberry Pi Picoの化身。計算が速すぎて時々オーバーヒートする。" },
-        { name: "バイナリ・キャット", icon: "🐈", desc: "0と1だけで構成された猫。キーボードの上を歩くと勝手にコードが書かれる。" },
-        { name: "VBAウィザード", icon: "🧙‍♂️", desc: "Excelの数式とマクロを操る老魔術師。口癖は「再計算！」" }
+        { name: "ソレノイドくん", icon: "💥", msg: "カチカチカチカチ！！（空打ちしすぎて火花出そう）" },
+        { name: "残業ゴースト", icon: "👻", msg: "「明日やろう」は馬鹿野郎。今のバグ、今直そう？" },
+        { name: "Pico様", icon: "🙇‍♂️", msg: "USBを逆に刺そうとしたな？今、一瞬死にかけたぞ。" },
+        { name: "Excelの精霊", icon: "📉", msg: "再計算が終わりません。一生砂時計を見ていてください。" },
+        { name: "バイナリ猫", icon: "🐈", msg: "01001110 01010111 (お腹空いた)" },
+        { name: " mikeylogの闇", icon: "🕶️", msg: "このQR、実は誰も見てないと思ってたでしょ？" }
     ];
 
-    let currentIndex = 0;
-    const card = document.getElementById('card');
-    const charIcon = document.getElementById('char-icon');
-    const charName = document.getElementById('char-name');
-    const charDesc = document.getElementById('char-desc');
-
-    function updateCharacter() {
-        // フェードアウト感を出すために一旦クラスを外す
-        card.classList.remove('fade-in');
-        
-        // 0.1秒後に内容を書き換えてフェードイン
-        setTimeout(() => {
-            const char = characters[currentIndex];
-            charIcon.textContent = char.icon;
-            charName.textContent = char.name;
-            charDesc.textContent = char.desc;
-            
-            card.classList.add('fade-in');
-            
-            // 次のキャラへ（ループ設定）
-            currentIndex = (currentIndex + 1) % characters.length;
-        }, 100);
+    let i = 0;
+    function rotate() {
+        const char = characters[i];
+        document.getElementById('char-name').textContent = char.name;
+        document.getElementById('char-icon').textContent = char.icon;
+        document.getElementById('char-msg').textContent = char.msg;
+        i = (i + 1) % characters.length;
     }
 
-    // 3秒ごとにキャラを切り替える
-    setInterval(updateCharacter, 3000);
-
-    // 初回実行
-    updateCharacter();
+    // 2秒ごとにキャラが「ガタガタ」入れ替わる
+    setInterval(rotate, 2000);
+    rotate();
 </script>
-
 </body>
 </html>
