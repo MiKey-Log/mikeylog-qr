@@ -3,52 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog 必死のパッチ</title>
+    <title>mikeylog - Monthly Log</title>
     <style>
-        body { margin: 0; background-color: #ffde00; color: #333; font-family: 'Hiragino Sans', 'Meiryo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #card { text-align: center; border: 8px solid #333; padding: 25px; width: 85%; max-width: 320px; background: #fff; border-radius: 30px; }
+        body { margin: 0; background-color: #f8f9fa; color: #333; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #card { text-align: center; border-left: 5px solid #000; padding: 40px; width: 80%; max-width: 400px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
-        /* 尋常じゃない震え */
-        .panic { animation: panic 0.05s infinite; }
-        @keyframes panic {
-            0% { transform: translate(2px, 2px); }
-            50% { transform: translate(-2px, -2px); }
-            100% { transform: translate(2px, -2px); }
-        }
+        /* 震えはやめて、ふわっと切り替えるアニメーション */
+        .fade { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .icon { font-size: 120px; margin: 10px 0; display: block; }
-        .msg-box { font-size: 20px; font-weight: 900; line-height: 1.4; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        .footer { font-size: 12px; margin-top: 20px; opacity: 0.6; }
+        .date { font-size: 14px; letter-spacing: 2px; color: #999; margin-bottom: 20px; text-transform: uppercase; }
+        .msg-box { font-size: 22px; font-weight: 500; line-height: 1.6; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+        .signature { margin-top: 30px; font-style: italic; font-size: 16px; color: #555; }
     </style>
 </head>
 <body>
 
-<div id="card" class="panic">
-    <div id="char-icon" class="icon">🎤</div>
-    <div class="msg-box" id="char-msg">読み込み中...</div>
-    <div class="footer">mikeylog - 秘密のQRコード</div>
+<div id="card" id="main-content">
+    <div class="date">Special Message</div>
+    <div class="msg-box" id="char-msg">...</div>
+    <div class="signature">— mikeylog</div>
 </div>
 
 <script>
-    const characters = [
-        { icon: "🎤", msg: "マイク持つ手が震えすぎて、もうこれは打楽器なんよ。" },
-        { icon: "🍮", msg: "プリンだと思って食べたら、めちゃくちゃ硬い消しゴムだった時の顔。" },
-        { icon: "🏃‍♂️", msg: "「あ、これ間に合わん」って確信した時の全力疾走。" },
-        { icon: "💩", msg: "今、私のことを「う○こ」だと思ったでしょ。正解です。" },
-        { icon: "🦟", msg: "耳元でプ〜ンって言ったあと、見失った時の絶望感。" },
-        { icon: "🔐", msg: "鍵開けようとしてるけど、実は今、自分自身の限界を突破しようとしてる。" }
+    const messages = [
+        "さっきからずっと、隣の人の鼻息がリズムを刻んでいる。",
+        "「期間限定」という言葉に、人生の半分くらいを支配されている気がする。",
+        "傘を持ってきた日に限って、雨が降らないのはなぜだろう。",
+        "今、あなたの後ろに誰か立っていますか？……あ、気のせいでした。",
+        "昨日の晩ごはんが思い出せなくて、少しだけ自分に絶望している。",
+        "正直に言います。このQRコード、あなたが初めての読み取りかもしれません。"
     ];
 
     let i = 0;
+    const msgBox = document.getElementById('char-msg');
+
     function rotate() {
-        const char = characters[i];
-        document.getElementById('char-icon').textContent = char.icon;
-        document.getElementById('char-msg').textContent = char.msg;
-        i = (i + 1) % characters.length;
+        msgBox.classList.remove('fade');
+        // 一瞬時間を置いてからクラスを付け直してフェードさせる
+        setTimeout(() => {
+            msgBox.textContent = messages[i];
+            msgBox.classList.add('fade');
+            i = (i + 1) % messages.length;
+        }, 50);
     }
 
-    // 1.5秒ごとに猛スピードで入れ替わる
-    setInterval(rotate, 1500);
+    // 4秒ごとに静かに切り替わる（じっくり読める速度）
+    setInterval(rotate, 4000);
     rotate();
 </script>
 </body>
