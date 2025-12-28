@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mikeylog 隠れキャラ図鑑</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #222, #333);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 80%;
+            max-width: 350px;
+            transition: all 0.5s ease;
+        }
+        .character-img {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            /* 画像を使う場合はここをimgタグへのスタイルに変更 */
+        }
+        h1 { font-size: 24px; margin: 10px 0; color: #00ffcc; }
+        p { font-size: 16px; color: #ccc; line-height: 1.5; }
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="card" class="fade-in">
+    <div id="char-icon" class="character-img">⚡</div>
+    <h1 id="char-name">読み込み中...</h1>
+    <p id="char-desc">隠れキャラを探しています</p>
+</div>
+
+<script>
+    // 隠れキャラのリスト（ここにアイデアを全部詰め込みます）
+    const characters = [
+        { name: "ソレノイドくん", icon: "🔌", desc: "「カチッ！」という音が大好き。いつも誰かの鍵を開けたがっている。" },
+        { name: "デバッグ・ゴースト", icon: "👻", desc: "プログラムのバグを食べてくれる守護霊。たまに無限ループに迷い込む。" },
+        { name: "爆速Picoくん", icon: "🏎️", desc: "Raspberry Pi Picoの化身。計算が速すぎて時々オーバーヒートする。" },
+        { name: "バイナリ・キャット", icon: "🐈", desc: "0と1だけで構成された猫。キーボードの上を歩くと勝手にコードが書かれる。" },
+        { name: "VBAウィザード", icon: "🧙‍♂️", desc: "Excelの数式とマクロを操る老魔術師。口癖は「再計算！」" }
+    ];
+
+    let currentIndex = 0;
+    const card = document.getElementById('card');
+    const charIcon = document.getElementById('char-icon');
+    const charName = document.getElementById('char-name');
+    const charDesc = document.getElementById('char-desc');
+
+    function updateCharacter() {
+        // フェードアウト感を出すために一旦クラスを外す
+        card.classList.remove('fade-in');
+        
+        // 0.1秒後に内容を書き換えてフェードイン
+        setTimeout(() => {
+            const char = characters[currentIndex];
+            charIcon.textContent = char.icon;
+            charName.textContent = char.name;
+            charDesc.textContent = char.desc;
+            
+            card.classList.add('fade-in');
+            
+            // 次のキャラへ（ループ設定）
+            currentIndex = (currentIndex + 1) % characters.length;
+        }, 100);
+    }
+
+    // 3秒ごとにキャラを切り替える
+    setInterval(updateCharacter, 3000);
+
+    // 初回実行
+    updateCharacter();
+</script>
+
+</body>
+</html>
