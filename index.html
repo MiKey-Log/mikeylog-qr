@@ -3,53 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog 秘密の部屋</title>
+    <title>mikeylog 必死のパッチ</title>
     <style>
-        body { margin: 0; background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #card { text-align: center; border: 2px solid #0f0; padding: 20px; width: 85%; max-width: 320px; position: relative; background: #050505; }
+        body { margin: 0; background-color: #ffde00; color: #333; font-family: 'Hiragino Sans', 'Meiryo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        #card { text-align: center; border: 8px solid #333; padding: 25px; width: 85%; max-width: 320px; background: #fff; border-radius: 30px; }
         
-        /* シュールな振動アニメーション */
-        .shake { animation: shake 0.1s infinite; }
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            50% { transform: translate(-1px, -2px) rotate(-1deg); }
-            100% { transform: translate(1px, -1px) rotate(1deg); }
+        /* 尋常じゃない震え */
+        .panic { animation: panic 0.05s infinite; }
+        @keyframes panic {
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, -2px); }
+            100% { transform: translate(2px, -2px); }
         }
 
-        .icon { font-size: 100px; margin: 20px 0; display: block; filter: drop-shadow(0 0 10px #0f0); }
-        .msg-box { background: #0f0; color: #000; font-weight: bold; padding: 5px; margin-top: 15px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .name-tag { position: absolute; top: -15px; left: 10px; background: #000; padding: 0 10px; border: 2px solid #0f0; font-size: 14px; }
+        .icon { font-size: 120px; margin: 10px 0; display: block; }
+        .msg-box { font-size: 20px; font-weight: 900; line-height: 1.4; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        .footer { font-size: 12px; margin-top: 20px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-<div id="card" class="shake">
-    <div class="name-tag" id="char-name">SYSTEM ERROR</div>
-    <div id="char-icon" class="icon">💾</div>
+<div id="card" class="panic">
+    <div id="char-icon" class="icon">🎤</div>
     <div class="msg-box" id="char-msg">読み込み中...</div>
+    <div class="footer">mikeylog - 秘密のQRコード</div>
 </div>
 
 <script>
     const characters = [
-        { name: "ソレノイドくん", icon: "💥", msg: "カチカチカチカチ！！（空打ちしすぎて火花出そう）" },
-        { name: "残業ゴースト", icon: "👻", msg: "「明日やろう」は馬鹿野郎。今のバグ、今直そう？" },
-        { name: "Pico様", icon: "🙇‍♂️", msg: "USBを逆に刺そうとしたな？今、一瞬死にかけたぞ。" },
-        { name: "Excelの精霊", icon: "📉", msg: "再計算が終わりません。一生砂時計を見ていてください。" },
-        { name: "バイナリ猫", icon: "🐈", msg: "01001110 01010111 (お腹空いた)" },
-        { name: " mikeylogの闇", icon: "🕶️", msg: "このQR、実は誰も見てないと思ってたでしょ？" }
+        { icon: "🎤", msg: "マイク持つ手が震えすぎて、もうこれは打楽器なんよ。" },
+        { icon: "🍮", msg: "プリンだと思って食べたら、めちゃくちゃ硬い消しゴムだった時の顔。" },
+        { icon: "🏃‍♂️", msg: "「あ、これ間に合わん」って確信した時の全力疾走。" },
+        { icon: "💩", msg: "今、私のことを「う○こ」だと思ったでしょ。正解です。" },
+        { icon: "🦟", msg: "耳元でプ〜ンって言ったあと、見失った時の絶望感。" },
+        { icon: "🔐", msg: "鍵開けようとしてるけど、実は今、自分自身の限界を突破しようとしてる。" }
     ];
 
     let i = 0;
     function rotate() {
         const char = characters[i];
-        document.getElementById('char-name').textContent = char.name;
         document.getElementById('char-icon').textContent = char.icon;
         document.getElementById('char-msg').textContent = char.msg;
         i = (i + 1) % characters.length;
     }
 
-    // 2秒ごとにキャラが「ガタガタ」入れ替わる
-    setInterval(rotate, 2000);
+    // 1.5秒ごとに猛スピードで入れ替わる
+    setInterval(rotate, 1500);
     rotate();
 </script>
 </body>
