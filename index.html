@@ -3,76 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog - Monthly Log</title>
+    <title>mikeylog - Random Log</title>
     <style>
-        /* フォントはシュールな明朝体 */
         body { 
             margin: 0; 
-            background-color: #f8f9fa; 
-            color: #333; 
-            font-family: 'Times New Roman', "MS PMincho", "Hiragino Mincho ProN", serif; 
             display: flex; 
             flex-direction: column;
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
+            transition: background 0.5s; 
             cursor: pointer;
         }
 
-        /* 初回タップを促す案内 */
-        #audio-hint {
-            font-size: 10px;
-            color: #ccc;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
+        #audio-hint { font-size: 10px; margin-bottom: 10px; letter-spacing: 1px; }
 
         #card { 
             text-align: center; 
-            border-left: 5px solid #000; 
             padding: 40px; 
             width: 80%; 
             max-width: 400px; 
-            background: #fff; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
         }
         
-        /* 文字とロゴを一緒にふわっとさせるアニメーション */
-        .fade-area { 
-            animation: fadeIn 0.8s ease-in forwards; 
-        }
-        
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
+        /* 1. ノーマル版：シュール */
+        body.mode-0 { background-color: #f8f9fa; color: #333; font-family: serif; }
+        body.mode-0 #card { background: #fff; border-left: 5px solid #000; }
+        body.mode-0 #audio-hint { color: #ccc; }
 
-        .date { 
-            font-size: 14px; 
-            letter-spacing: 2px; 
-            color: #999; 
-            margin-bottom: 20px; 
-            text-transform: uppercase; 
-        }
+        /* 2. ダーク版：怪しい裏メニュー */
+        body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', Courier, monospace; }
+        body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
+        body.mode-1 #audio-hint { color: #00ff41; }
 
-        .msg-box { 
-            font-size: 22px; 
-            font-weight: 500; 
-            line-height: 1.6; 
-            min-height: 120px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        
-        .signature-logo { 
-            margin-top: 30px; 
-        }
+        /* 3. ゴールド版：ちょっと偉そうな格言 */
+        body.mode-2 { background-color: #1a1a1a; color: #d4af37; font-family: serif; }
+        body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
+        body.mode-2 #audio-hint { color: #d4af37; }
 
-        .signature-logo img { 
-            max-width: 140px; 
-            height: auto; 
-        }
+        .fade-area { animation: fadeIn 0.8s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .date { font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
+        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.7; min-height: 110px; display: flex; align-items: center; justify-content: center; }
+        .signature-logo { margin-top: 30px; }
+        .signature-logo img { max-width: 130px; height: auto; }
     </style>
 </head>
 <body onclick="enableAudio()">
@@ -80,7 +55,7 @@
     <div id="audio-hint">TAP TO START SOUND</div>
 
     <div id="card">
-        <div class="date">Special Message</div>
+        <div class="date" id="mode-name">---</div>
         
         <div id="fade-target" class="fade-area">
             <div class="msg-box" id="char-msg">...</div>
@@ -91,14 +66,49 @@
     </div>
 
 <script>
-    const messages = [
-        "さっきからずっと、隣の人の鼻息がリズムを刻んでいる。",
-        "「期間限定」という言葉に、人生の半分くらいを支配されている気がする。",
-        "傘を持ってきた日に限って、雨が降らないのはなぜだろう。",
-        "今、あなたの後ろに誰か立っていますか？……あ、気のせいでした。",
-        "昨日の晩ごはんが思い出せなくて、少しだけ自分に絶望している。",
-        "正直に言います。このQRコード、あなたが初めての読み取りかもしれません。"
+    // モードごとのメッセージ設定
+    const modeConfigs = [
+        {
+            name: "Normal / シュールな日常",
+            freq: 1200,
+            messages: [
+                "「後でやる」の「後」が、まだ来ない。",
+                "自動ドアに無視されると、自分の存在意義を疑う。",
+                "傘を持ってきた日に限って、雨が降らない呪い。",
+                "スーパーのレジ、隣の列の方が早い気がする。",
+                "昨日の晩ごはんが思い出せず、自分に絶望している。"
+            ]
+        },
+        {
+            name: "Dark / 裏の独り言",
+            freq: 440,
+            messages: [
+                "今、あなたの後ろに誰か立っていますか？……気のせいか。",
+                "このログを読んでいるのは、世界であなた一人だけかもしれない。",
+                "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。",
+                "スマホを覗き込んでいる時、スマホもあなたを覗いている。",
+                "ここだけの話、明日の運勢はあなた次第です。"
+            ]
+        },
+        {
+            name: "Gold / 大人の格言風",
+            freq: 1800,
+            messages: [
+                "贅沢とは、何もしない時間に名前をつけることだ。",
+                "迷ったら、一番面白い方を選べばいい。たぶん。",
+                "充電の残量は、心の余裕の残量である。",
+                "美味しいものは、だいたい茶色い。",
+                "人生にリハーサルはないが、休憩時間はいくらでもある。"
+            ]
+        }
     ];
+
+    // ランダムでモード決定
+    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
+    const config = modeConfigs[modeIdx];
+    
+    document.body.classList.add('mode-' + modeIdx);
+    document.getElementById('mode-name').textContent = config.name;
 
     let i = 0;
     let audioContext = null;
@@ -106,51 +116,38 @@
     const fadeTarget = document.getElementById('fade-target');
     const audioHint = document.getElementById('audio-hint');
 
-    // ブラウザの音制限を解除し、音を鳴らす準備
     function enableAudio() {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            audioHint.style.display = 'none'; // タップされたら案内を消す
-            playTickSound(); // 初回確認音
+            audioHint.style.display = 'none';
+            playTickSound();
         }
     }
 
-    // 電子音（ピッ）を生成する関数
     function playTickSound() {
         if (!audioContext) return;
-        
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
-        
         osc.connect(gain);
         gain.connect(audioContext.destination);
-
-        osc.type = 'sine'; 
-        osc.frequency.setValueAtTime(1200, audioContext.currentTime); // 高めのピ音
-        
+        osc.frequency.setValueAtTime(config.freq, audioContext.currentTime);
         gain.gain.setValueAtTime(0.05, audioContext.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
-
         osc.start();
         osc.stop(audioContext.currentTime + 0.1);
     }
 
     function rotate() {
-        // 音を鳴らす
         playTickSound();
-
-        // アニメーションをリセット
         fadeTarget.style.animation = 'none';
         fadeTarget.offsetHeight; 
-        
         setTimeout(() => {
-            msgBox.textContent = messages[i];
+            msgBox.textContent = config.messages[i];
             fadeTarget.style.animation = 'fadeIn 0.8s ease-in forwards';
-            i = (i + 1) % messages.length;
+            i = (i + 1) % config.messages.length;
         }, 50);
     }
 
-    // 4.5秒ごとに切り替え
     setInterval(rotate, 4500);
     rotate();
 </script>
