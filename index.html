@@ -10,35 +10,27 @@
             align-items: center; height: 100vh; transition: background 0.5s; 
             cursor: pointer; overflow: hidden; font-family: serif; background-color: #f8f9fa;
         }
-        #audio-hint { font-size: 10px; margin-bottom: 10px; letter-spacing: 1px; color: #ccc; position: absolute; top: 20px; }
-        #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; }
+        #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; }
         
+        /* 各モード */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
-        body.mode-0 #card { border-left: 5px solid #000; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
 
         .fade-in { animation: fadeInAnim 0.8s ease-in forwards; }
-        @keyframes fadeInAnim { 
-            from { opacity: 0; transform: translateY(5px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes fadeInAnim { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .date { font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
-        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 140px; display: flex; align-items: center; justify-content: center; text-align: center; }
-        
+        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .special-phrase { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 10px; font-size: 18px; font-weight: normal; opacity: 0.8; }
-
         .signature-logo { margin-top: 30px; }
         .signature-logo img { max-width: 130px; height: auto; }
     </style>
 </head>
 <body onclick="enableAudio()">
-
-    <div id="audio-hint">TAP TO START SOUND</div>
 
     <div id="card">
         <div class="date" id="mode-name">Message</div>
@@ -52,30 +44,10 @@
 
 <script>
     const finalComment = "<div class='special-phrase'>いい加減に仕事しようっかぁ～<span class='go-anzen'>ご安全に！</span></div>";
-
     const modeConfigs = [
-        {
-            name: "Normal / シュールな日常", freq: 1200,
-            messages: [
-                "「後でやる」の「後」が、まだ来ない。",
-                "自動ドアに無視されると、自分の存在意義を疑う。",
-                "傘を持ってきた日に限って、雨が降らない呪い。",
-                "スーパーのレジ、隣の列の方が早い気がする。",
-                "昨日の晩ごはんが思い出せず、自分に絶望している。"
-            ]
-        },
-        {
-            name: "Dark / 裏の独り言", freq: 440,
-            messages: [
-                "今、あなたの後ろに誰か立っていますか？……気のせいか。",
-                "このログを読んでいるのは、世界であなた一人だけかもしれない。",
-                "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。",
-                "スマホを覗き込んでいる時、スマホもあなたを覗いている。",
-                "ここだけの話、明日の運勢はあなた次第です。"
-            ]
-        },
-        {
-            name: "Gold / 大人の格言風", freq: 1800,
-            messages: [
-                "贅沢とは、何もしない時間に名前をつけることだ。",
-                "迷ったら、一番面白い方を選べば
+        { name: "Normal", freq: 1200, messages: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "傘を持ってきた日に限って、雨が降らない呪い。", "スーパーのレジ、隣の列の方が早い気がする。", "昨日の晩ごはんが思い出せず、自分に絶望している。"] },
+        { name: "Dark", freq: 440, messages: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "ここだけの話、明日の運勢はあなた次第です。"] },
+        { name: "Gold", freq: 1800, messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
+    ];
+
+    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
