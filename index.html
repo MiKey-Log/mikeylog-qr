@@ -26,13 +26,9 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* ロゴエリア */
+        /* ロゴエリア：画像を使わずコードでネコシルエットを描画 */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .logo-area img { 
-            width: 100px; height: 100px; border-radius: 50%; 
-            border: 2px solid currentColor; background: #eee;
-            object-fit: cover;
-        }
+        .cat-logo { width: 100px; height: 100px; fill: currentColor; }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -52,9 +48,9 @@
         </div>
 
         <div class="logo-area">
-            <img src="MiKey-Log.png" 
-                 onerror="this.onerror=null; this.src='https://avatars.githubusercontent.com/u/190809794?v=4';" 
-                 alt="MiKey Log Logo">
+            <svg class="cat-logo" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
         </div>
     </div>
 
@@ -71,4 +67,43 @@
         let idx = 0;
         const mIdx = Math.floor(Math.random() * modes.length);
         const cfg = modes[mIdx];
-        const list
+        const list = [...cfg.m, final];
+
+        document.body.className = 'mode-' + mIdx;
+        document.getElementById('mode-name').innerText = cfg.n;
+        document.getElementById('char-msg').innerHTML = list[0];
+
+        window.initAudio = function() {
+            if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (ctx.state === 'suspended') ctx.resume();
+            tick();
+        };
+
+        function tick() {
+            if (!ctx) return;
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.frequency.value = cfg.f;
+            g.gain.setValueAtTime(0.05, ctx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            o.start(); o.stop(ctx.currentTime + 0.1);
+        }
+
+        function rotate() {
+            idx = (idx + 1) % list.length;
+            const cont = document.getElementById('msg-container');
+            const box = document.getElementById('char-msg');
+            if (cont && box) {
+                cont.classList.remove('fade');
+                void cont.offsetWidth; 
+                box.innerHTML = list[idx];
+                cont.classList.add('fade');
+                if(ctx) tick();
+            }
+        }
+        setInterval(rotate, 5000);
+    })();
+</script>
+</body>
+</html>
