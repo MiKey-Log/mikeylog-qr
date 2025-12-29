@@ -3,33 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog - Random Log Extreme</title>
+    <title>mikeylog - Random Log</title>
     <style>
-        /* CSSで最初から見た目を固定：JSが死んでも真っ白にならない */
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; height: 100vh; transition: background 0.5s; 
-            cursor: pointer; overflow: hidden; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            cursor: pointer; overflow: hidden; font-family: serif;
             background-color: #f8f9fa; color: #333; 
         }
         #card { 
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #fff; 
-            border-left: 6px solid #000; border-radius: 2px;
-            animation: cardEntry 0.8s ease-out;
+            border-left: 6px solid #000;
         }
-        @keyframes cardEntry { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        /* モード別スタイル */
+        /* モード別 */
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
-        body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 6px solid #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+        body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 6px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
-        body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 6px solid #d4af37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 6px solid #d4af37; }
 
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; opacity: 0.6; }
         .msg-box { font-size: 21px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* フェードアニメーション（JSで制御） */
         .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -37,4 +32,70 @@
         .go-anzen { display: block; margin-top: 15px; font-size: 19px; font-weight: normal; opacity: 0.9; font-style: normal; color: #ff3b30; }
         body.mode-1 .go-anzen { color: #00ff41; }
 
-        .logo { margin-top: 30px; opacity:
+        .logo { margin-top: 30px; }
+        .logo img { max-width: 110px; height: auto; border-radius: 50%; }
+    </style>
+</head>
+<body onclick="enableAudio()">
+
+    <div id="card">
+        <div class="date" id="mode-name">Message</div>
+        <div id="fade-target" class="fade-in">
+            <div class="msg-box" id="char-msg">「明日から本気出す」を、もう3000回は言った。</div>
+            <div class="logo">
+                <img src="https://github.com/MiKey-Log.png" alt="MikeyLog">
+            </div>
+        </div>
+    </div>
+
+<script>
+    (function() {
+        const finalScreen = `<div class="special-phrase">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>`;
+        const modes = [
+            { n: "Normal / 日常の深淵", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "幸せのハードルを下げすぎて、地面に埋まっている。", "正解を探すうちに、問題の方を忘れてしまった。"] },
+            { n: "Dark / 深夜の独白", f: 440, m: ["あなたが「無駄」にした今日は、誰かが生きたかった明日……とか、重いよ。", "鏡を見るたび、知らない人がこっちを見ている。", "「普通」って言葉は、誰が作った凶器なんだろう。", "逃げ道があるから、迷路は完成するんだ。", "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。"] },
+            { n: "Gold / 大人の真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "充電の残量は、心の余裕の残量である。", "大人になると、ご褒美を自分で買わなきゃいけない。", "自由とは、嫌いな奴に「NO」と言える貯金額のこと。", "休息は、次に跳ぶための助走ではなく、ただの休息でいい。"] }
+        ];
+
+        const config = modes[Math.floor(Math.random() * modes.length)];
+        const messages = [...config.m, finalScreen];
+        let i = 0;
+        let audio = null;
+
+        // 初期セットアップ
+        document.body.className = 'mode-' + modes.indexOf(config);
+        document.getElementById('mode-name').innerText = config.n;
+        document.getElementById('char-msg').innerHTML = messages[0];
+
+        window.enableAudio = function() {
+            if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+            tick();
+        };
+
+        function tick() {
+            if (!audio) return;
+            const o = audio.createOscillator();
+            const g = audio.createGain();
+            o.connect(g); g.connect(audio.destination);
+            o.frequency.value = config.f;
+            g.gain.setValueAtTime(0.06, audio.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.1);
+            o.start(); o.stop(audio.currentTime + 0.1);
+        }
+
+        function rotate() {
+            i = (i + 1) % messages.length;
+            const target = document.getElementById('fade-target');
+            const msgBox = document.getElementById('char-msg');
+            target.classList.remove('fade-in');
+            void target.offsetWidth; 
+            msgBox.innerHTML = messages[i];
+            target.classList.add('fade-in');
+            tick();
+        }
+
+        setInterval(rotate, 5000);
+    })();
+</script>
+</body>
+</html>
