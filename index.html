@@ -3,94 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog - Random Log</title>
+    <title>mikeylog - Random Log Extreme</title>
     <style>
+        /* CSSで最初から見た目を固定：JSが死んでも真っ白にならない */
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; height: 100vh; transition: background 0.5s; 
-            cursor: pointer; overflow: hidden; font-family: serif; background-color: #f8f9fa;
+            cursor: pointer; overflow: hidden; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: #f8f9fa; color: #333; 
         }
-        #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; }
-        
-        /* モード別設定 */
-        body.mode-0 { background-color: #f8f9fa; color: #333; }
-        body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
-        body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
+        #card { 
+            text-align: center; padding: 40px; width: 85%; max-width: 420px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #fff; 
+            border-left: 6px solid #000; border-radius: 2px;
+            animation: cardEntry 0.8s ease-out;
+        }
+        @keyframes cardEntry { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* モード別スタイル */
+        body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
+        body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 6px solid #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
-        body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
+        body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 6px solid #d4af37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* 最初から表示させておくためのアニメーション */
-        .fade-active { animation: fadeIn 0.8s ease-in-out forwards; }
-        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
-
-        .date { font-size: 11px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
-        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .special-phrase { font-size: 22px; font-weight: bold; font-style: italic; }
-        .go-anzen { display: block; margin-top: 15px; font-size: 18px; font-weight: normal; opacity: 0.8; font-style: normal; }
-        .signature-logo { margin-top: 30px; }
-        .signature-logo img { max-width: 120px; height: auto; }
-    </style>
-</head>
-<body onclick="enableAudio()">
-    <div id="card">
-        <div class="date" id="mode-name">Message</div>
-        <div id="fade-target" class="fade-active">
-            <div class="msg-box" id="char-msg">「明日から本気出す」を、もう3000回は言った。</div>
-            <div class="signature-logo">
-                <img src="https://github.com/MiKey-Log.png" alt="Logo">
-            </div>
-        </div>
-    </div>
-
-<script>
-    // JSが動いた瞬間、即座にセリフリストを生成
-    (function() {
-        const final = `<div class="special-phrase">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>`;
-        const modes = [
-            { n: "Normal", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "スーパーのレジ、隣の列の方が早い気がする。", "幸せのハードルを下げすぎて、今や地面に埋まっている。", "100円ショップで、結局3000円使ってしまう謎。", "傘を持ってきた日に限って、雨が降らない呪い。", "部屋の乱れは心の乱れ。今の私の心、たぶん密林。", "正解を探しているうちに、問題の方を忘れてしまった。", "昨日の晩ごはんが思い出せず、自分に絶望している。"] },
-            { n: "Dark", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "あなたが「無駄」にした今日は、誰かが生きたかった明日……とか、重いよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "鏡を見るたび、知らない人がこっちを見ている気がする。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "「普通」って言葉は、誰が作った凶器なんだろう。", "逃げ道があるから、迷路は完成するんだ。", "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。", "ここだけの話、明日の運勢はあなた次第です。"] },
-            { n: "Gold", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "完璧を目指すより、まずは終わらせる勇気を。", "充電の残量は、心の余裕の残量である。", "大人になると、ご褒美を自分で買わなきゃいけないのが辛い。", "美味しいものは、だいたい茶色い。", "才能がないんじゃない、まだ本気でサボってないだけだ。", "自由とは、嫌いな奴に「NO」と言える貯金額のこと。", "休息は、次に跳ぶための助走ではなく、ただの休息でいい。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
-        ];
-
-        const sel = modes[Math.floor(Math.random() * modes.length)];
-        const list = [...sel.m, final];
-        let idx = 0;
-        let ctx = null;
-
-        // 画面初期化
-        document.body.className = 'mode-' + modes.indexOf(sel);
-        document.getElementById('mode-name').textContent = sel.n;
-        const box = document.getElementById('char-msg');
-        const tgt = document.getElementById('fade-target');
+        .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; opacity: 0.6; }
+        .msg-box { font-size: 21px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        // 最初のセリフを反映
-        box.innerHTML = list[0];
+        /* フェードアニメーション（JSで制御） */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        window.enableAudio = () => {
-            if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-            play();
-        };
+        .special-phrase { font-size: 24px; font-weight: bold; font-style: italic; }
+        .go-anzen { display: block; margin-top: 15px; font-size: 19px; font-weight: normal; opacity: 0.9; font-style: normal; color: #ff3b30; }
+        body.mode-1 .go-anzen { color: #00ff41; }
 
-        const play = () => {
-            if (!ctx) return;
-            const o = ctx.createOscillator(); const g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = sel.f; g.gain.value = 0.05;
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            o.start(); o.stop(ctx.currentTime + 0.1);
-        };
-
-        const rotate = () => {
-            idx = (idx + 1) % list.length;
-            tgt.classList.remove('fade-active');
-            void tgt.offsetWidth; 
-            box.innerHTML = list[idx];
-            tgt.classList.add('fade-active');
-            play();
-        };
-
-        setInterval(rotate, 5000);
-    })();
-</script>
-</body>
-</html>
+        .logo { margin-top: 30px; opacity:
