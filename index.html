@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog - Random Log v2.0</title>
+    <title>mikeylog - Random Log</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
@@ -13,15 +13,19 @@
         #audio-hint { font-size: 10px; margin-bottom: 15px; letter-spacing: 1px; color: #888; }
         #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; }
         
-        /* モード別 */
+        /* モード別背景（初期はNormal） */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
 
-        .fade-active { animation: fadeInOut 0.8s ease-in-out forwards; }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
+        /* フェードアニメーション */
+        .fade-active { animation: fadeIn 0.8s ease-in-out forwards; }
+        @keyframes fadeIn { 
+            0% { opacity: 0; transform: translateY(5px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
 
         .date { font-size: 11px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
         .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -38,9 +42,9 @@
     <div id="audio-hint">TAP TO START SOUND</div>
 
     <div id="card">
-        <div class="date" id="mode-name">---</div>
-        <div id="fade-target">
-            <div class="msg-box" id="char-msg"></div>
+        <div class="date" id="mode-name">Message</div>
+        <div id="fade-target" class="fade-active">
+            <div class="msg-box" id="char-msg">「後でやる」の「後」が、まだ来ない。</div>
             <div class="signature-logo">
                 <img src="https://github.com/MiKey-Log.png" alt="Logo">
             </div>
@@ -56,6 +60,7 @@
         { name: "Gold / 大人の格言風", freq: 1800, messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
     ];
 
+    // ランダム初期化
     const modeIdx = Math.floor(Math.random() * modeConfigs.length);
     const config = modeConfigs[modeIdx];
     const displayList = [...config.messages, finalComment];
@@ -68,7 +73,9 @@
     const msgBox = document.getElementById('char-msg');
     const fadeTarget = document.getElementById('fade-target');
 
-    // --- 音を鳴らす機能 ---
+    // 1枚目を現在のモードの1番目に書き換える（JSが動いた瞬間）
+    msgBox.innerHTML = displayList[0];
+
     function enableAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -91,22 +98,21 @@
         osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    function update() {
+    function rotate() {
+        // インデックスを次に進める
+        currentIndex = (currentIndex + 1) % displayList.length;
+
         fadeTarget.classList.remove('fade-active');
         void fadeTarget.offsetWidth; 
         
         msgBox.innerHTML = displayList[currentIndex];
         fadeTarget.classList.add('fade-active');
 
-        // 音声を再生
         playTick();
-
-        currentIndex = (currentIndex + 1) % displayList.length;
     }
 
-    // --- 起動 ---
-    update(); // 初回実行
-    setInterval(update, 5000); // 5秒ごとにループ
+    // 初回は表示済みなので、5秒後からrotateを開始する
+    setInterval(rotate, 5000);
 </script>
 </body>
 </html>
