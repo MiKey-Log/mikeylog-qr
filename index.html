@@ -10,22 +10,28 @@
             align-items: center; height: 100vh; transition: background 0.5s; 
             cursor: pointer; overflow: hidden; font-family: serif; background-color: #f8f9fa;
         }
-        #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; }
+        #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; position: relative; }
         
-        /* 各モード */
+        /* モード別背景 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
 
-        .fade-in { animation: fadeInAnim 0.8s ease-in forwards; }
-        @keyframes fadeInAnim { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* アニメーション：JSに頼らずCSSで完結させる */
+        .fade-active { animation: fadeInOut 1s ease-in-out forwards; }
+        @keyframes fadeInOut { 
+            0% { opacity: 0; transform: translateY(5px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
 
         .date { font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
-        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
         .special-phrase { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 10px; font-size: 18px; font-weight: normal; opacity: 0.8; }
+        
         .signature-logo { margin-top: 30px; }
         .signature-logo img { max-width: 130px; height: auto; }
     </style>
@@ -34,8 +40,8 @@
 
     <div id="card">
         <div class="date" id="mode-name">Message</div>
-        <div id="fade-target" class="fade-in">
-            <div class="msg-box" id="char-msg">「後でやる」の「後」が、まだ来ない。</div>
+        <div id="fade-target">
+            <div class="msg-box" id="char-msg">...</div>
             <div class="signature-logo">
                 <img src="https://github.com/MiKey-Log.png" alt="Logo">
             </div>
@@ -43,11 +49,10 @@
     </div>
 
 <script>
-    const finalComment = "<div class='special-phrase'>いい加減に仕事しようっかぁ～<span class='go-anzen'>ご安全に！</span></div>";
     const modeConfigs = [
-        { name: "Normal", freq: 1200, messages: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "傘を持ってきた日に限って、雨が降らない呪い。", "スーパーのレジ、隣の列の方が早い気がする。", "昨日の晩ごはんが思い出せず、自分に絶望している。"] },
-        { name: "Dark", freq: 440, messages: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "ここだけの話、明日の運勢はあなた次第です。"] },
-        { name: "Gold", freq: 1800, messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
+        { name: "Normal", messages: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "傘を持ってきた日に限って、雨が降らない呪い。", "スーパーのレジ、隣の列の方が早い気がする。", "昨日の晩ごはんが思い出せず、自分に絶望している。"] },
+        { name: "Dark", messages: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "ここだけの話、明日の運勢はあなた次第です。"] },
+        { name: "Gold", messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
     ];
 
-    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
+    const finalComment = "<div class='special-phrase'>
