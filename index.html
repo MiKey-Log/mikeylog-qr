@@ -13,14 +13,12 @@
         #audio-hint { font-size: 10px; margin-bottom: 15px; letter-spacing: 1px; color: #888; }
         #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; border-left: 5px solid #000; }
         
-        /* モード別背景（初期はNormal） */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
 
-        /* フェードアニメーション */
         .fade-active { animation: fadeIn 0.8s ease-in-out forwards; }
         @keyframes fadeIn { 
             0% { opacity: 0; transform: translateY(5px); } 
@@ -44,7 +42,7 @@
     <div id="card">
         <div class="date" id="mode-name">Message</div>
         <div id="fade-target" class="fade-active">
-            <div class="msg-box" id="char-msg">「後でやる」の「後」が、まだ来ない。</div>
+            <div class="msg-box" id="char-msg">...</div>
             <div class="signature-logo">
                 <img src="https://github.com/MiKey-Log.png" alt="Logo">
             </div>
@@ -55,64 +53,54 @@
     const finalComment = `<div class="special-phrase">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>`;
 
     const modeConfigs = [
-        { name: "Normal / シュールな日常", freq: 1200, messages: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "傘を持ってきた日に限って、雨が降らない呪い。", "スーパーのレジ、隣の列の方が早い気がする。", "昨日の晩ごはんが思い出せず、自分に絶望している。"] },
-        { name: "Dark / 裏の独り言", freq: 440, messages: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "ここだけの話、明日の運勢はあなた次第です。"] },
-        { name: "Gold / 大人の格言風", freq: 1800, messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
+        { 
+            name: "Normal / シュールな日常", 
+            freq: 1200, 
+            messages: [
+                "「後でやる」の「後」が、まだ来ない。",
+                "自動ドアに無視されると、自分の存在意義を疑う。",
+                "「明日から本気出す」を、もう3000回は言った。",
+                "スーパーのレジ、隣の列の方が早い気がする。",
+                "幸せのハードルを下げすぎて、今や地面に埋まっている。",
+                "100円ショップで、結局3000円使ってしまう謎。",
+                "傘を持ってきた日に限って、雨が降らない呪い。",
+                "部屋の乱れは心の乱れ。今の私の心、たぶん密林。",
+                "正解を探しているうちに、問題の方を忘れてしまった。",
+                "昨日の晩ごはんが思い出せず、自分に絶望している。"
+            ] 
+        },
+        { 
+            name: "Dark / 裏の独り言", 
+            freq: 440, 
+            messages: [
+                "今、あなたの後ろに誰か立っていますか？",
+                "このログを読んでいるのは、世界であなた一人だけかもしれない。",
+                "あなたが「無駄」にした今日は、誰かが生きたかった明日……とか、重いよ。",
+                "スマホを覗き込んでいる時、スマホもあなたを覗いている。",
+                "鏡を見るたび、知らない人がこっちを見ている気がする。",
+                "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。",
+                "「普通」って言葉は、誰が作った凶器なんだろう。",
+                "逃げ道があるから、迷路は完成するんだ。",
+                "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。",
+                "ここだけの話、明日の運勢はあなた次第です。"
+            ] 
+        },
+        { 
+            name: "Gold / 大人の格言風", 
+            freq: 1800, 
+            messages: [
+                "贅沢とは、何もしない時間に名前をつけることだ。",
+                "迷ったら、一番面白い方を選べばいい。たぶん。",
+                "完璧を目指すより、まずは終わらせる勇気を。",
+                "充電の残量は、心の余裕の残量である。",
+                "大人になると、ご褒美を自分で買わなきゃいけないのが辛い。",
+                "美味しいものは、だいたい茶色い。",
+                "才能がないんじゃない、まだ本気でサボってないだけだ。",
+                "自由とは、嫌いな奴に「NO」と言える貯金額のこと。",
+                "休息は、次に跳ぶための助走ではなく、ただの休息でいい。",
+                "人生にリハーサルはないが、休憩時間はいくらでもある。"
+            ] 
+        }
     ];
 
-    // ランダム初期化
-    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
-    const config = modeConfigs[modeIdx];
-    const displayList = [...config.messages, finalComment];
-
-    document.body.className = 'mode-' + modeIdx;
-    document.getElementById('mode-name').textContent = config.name;
-    
-    let currentIndex = 0;
-    let audioCtx = null;
-    const msgBox = document.getElementById('char-msg');
-    const fadeTarget = document.getElementById('fade-target');
-
-    // 1枚目を現在のモードの1番目に書き換える（JSが動いた瞬間）
-    msgBox.innerHTML = displayList[0];
-
-    function enableAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const hint = document.getElementById('audio-hint');
-            if (hint) hint.style.display = 'none';
-        }
-        playTick();
-    }
-
-    function playTick() {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.frequency.setValueAtTime(config.freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
-    }
-
-    function rotate() {
-        // インデックスを次に進める
-        currentIndex = (currentIndex + 1) % displayList.length;
-
-        fadeTarget.classList.remove('fade-active');
-        void fadeTarget.offsetWidth; 
-        
-        msgBox.innerHTML = displayList[currentIndex];
-        fadeTarget.classList.add('fade-active');
-
-        playTick();
-    }
-
-    // 初回は表示済みなので、5秒後からrotateを開始する
-    setInterval(rotate, 5000);
-</script>
-</body>
-</html>
+    const modeIdx = Math.floor(
