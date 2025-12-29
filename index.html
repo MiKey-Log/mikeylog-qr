@@ -26,17 +26,17 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
         }
         
-        /* 1. ノーマル版：シュール */
+        /* 1. ノーマル版 */
         body.mode-0 { background-color: #f8f9fa; color: #333; font-family: serif; }
         body.mode-0 #card { background: #fff; border-left: 5px solid #000; }
         body.mode-0 #audio-hint { color: #ccc; }
 
-        /* 2. ダーク版：怪しい裏メニュー */
+        /* 2. ダーク版 */
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', Courier, monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
         body.mode-1 #audio-hint { color: #00ff41; }
 
-        /* 3. ゴールド版：ちょっと偉そうな格言 */
+        /* 3. ゴールド版 */
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; font-family: serif; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
         body.mode-2 #audio-hint { color: #d4af37; }
@@ -45,7 +45,28 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .date { font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
-        .msg-box { font-size: 20px; font-weight: 500; line-height: 1.7; min-height: 110px; display: flex; align-items: center; justify-content: center; }
+        
+        /* メッセージボックス */
+        .msg-box { 
+            font-size: 20px; 
+            font-weight: 500; 
+            line-height: 1.8; 
+            min-height: 140px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        /* 「いい加減に仕事しよう！」の強調スタイル */
+        .shigoto-phrase {
+            display: block;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
         .signature-logo { margin-top: 30px; }
         .signature-logo img { max-width: 130px; height: auto; }
     </style>
@@ -66,44 +87,44 @@
     </div>
 
 <script>
-    // モードごとのメッセージ設定
+    const shigoto = "<span class='shigoto-phrase'>—— いい加減に仕事しよう！</span>";
+
     const modeConfigs = [
         {
             name: "Normal / シュールな日常",
             freq: 1200,
             messages: [
-                "「後でやる」の「後」が、まだ来ない。",
-                "自動ドアに無視されると、自分の存在意義を疑う。",
-                "傘を持ってきた日に限って、雨が降らない呪い。",
-                "スーパーのレジ、隣の列の方が早い気がする。",
-                "昨日の晩ごはんが思い出せず、自分に絶望している。"
+                "「後でやる」の「後」が、まだ来ない。" + shigoto,
+                "自動ドアに無視されると、自分の存在意義を疑う。" + shigoto,
+                "傘を持ってきた日に限って、雨が降らない呪い。" + shigoto,
+                "スーパーのレジ、隣の列の方が早い気がする。" + shigoto,
+                "昨日の晩ごはんが思い出せず、自分に絶望している。" + shigoto
             ]
         },
         {
             name: "Dark / 裏の独り言",
             freq: 440,
             messages: [
-                "今、あなたの後ろに誰か立っていますか？……気のせいか。",
-                "このログを読んでいるのは、世界であなた一人だけかもしれない。",
-                "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。",
-                "スマホを覗き込んでいる時、スマホもあなたを覗いている。",
-                "ここだけの話、明日の運勢はあなた次第です。"
+                "今、あなたの後ろに誰か立っていますか？……気のせいか。" + shigoto,
+                "このログを読んでいるのは、世界であなた一人だけかもしれない。" + shigoto,
+                "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。" + shigoto,
+                "スマホを覗き込んでいる時、スマホもあなたを覗いている。" + shigoto,
+                "ここだけの話、明日の運勢はあなた次第です。" + shigoto
             ]
         },
         {
             name: "Gold / 大人の格言風",
             freq: 1800,
             messages: [
-                "贅沢とは、何もしない時間に名前をつけることだ。",
-                "迷ったら、一番面白い方を選べばいい。たぶん。",
-                "充電の残量は、心の余裕の残量である。",
-                "美味しいものは、だいたい茶色い。",
-                "人生にリハーサルはないが、休憩時間はいくらでもある。"
+                "贅沢とは、何もしない時間に名前をつけることだ。" + shigoto,
+                "迷ったら、一番面白い方を選べばいい。たぶん。" + shigoto,
+                "充電の残量は、心の余裕の残量である。" + shigoto,
+                "美味しいものは、だいたい茶色い。" + shigoto,
+                "人生にリハーサルはないが、休憩時間はいくらでもある。" + shigoto
             ]
         }
     ];
 
-    // ランダムでモード決定
     const modeIdx = Math.floor(Math.random() * modeConfigs.length);
     const config = modeConfigs[modeIdx];
     
@@ -142,13 +163,13 @@
         fadeTarget.style.animation = 'none';
         fadeTarget.offsetHeight; 
         setTimeout(() => {
-            msgBox.textContent = config.messages[i];
+            msgBox.innerHTML = config.messages[i]; // HTMLとして流し込む
             fadeTarget.style.animation = 'fadeIn 0.8s ease-in forwards';
             i = (i + 1) % config.messages.length;
         }, 50);
     }
 
-    setInterval(rotate, 4500);
+    setInterval(rotate, 5000); // 5秒に微調整（少し長めに読ませる）
     rotate();
 </script>
 </body>
