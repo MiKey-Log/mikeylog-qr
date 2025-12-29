@@ -5,43 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mikeylog - Random Log</title>
     <style>
-        /* JSが動かなくても、まずはこの色とレイアウトを表示する */
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; height: 100vh; font-family: sans-serif;
-            background-color: #f8f9fa; color: #333; 
+            background-color: #f8f9fa; color: #333; transition: background 0.3s;
+            cursor: pointer; overflow: hidden;
         }
         #card { 
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        /* モード変更用（JSが動いた時だけ適用される） */
+        /* モード切替 */
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border-left: 6px solid #d4af37; }
 
-        .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; }
-        .msg-box { font-size: 21px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+        .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
+        .msg-box { font-size: 21px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        .fade { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 安定したフェード */
+        .fade { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .special { font-size: 24px; font-weight: bold; font-style: italic; }
-        .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; font-style: normal; }
+        .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; font-style: normal; font-weight: normal; }
+        body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
 <body onclick="startAudio()">
 
     <div id="card">
         <div class="date" id="mode-name">MESSAGE</div>
-        <div id="fade-target" class="fade">
+        <div id="msg-container">
             <div id="char-msg" class="msg-box">「明日から本気出す」を、もう3000回は言った。</div>
         </div>
     </div>
 
 <script>
-    // 最小限のJS。これが死んでも「真っ白」にはなりません。
     (function() {
         const final = `<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>`;
         const modes = [
@@ -55,18 +56,54 @@
         let i = 0;
         let ctx = null;
 
-        // 初期設定
+        // 初期セットアップ
         document.body.className = 'mode-' + modes.indexOf(cfg);
         document.getElementById('mode-name').innerText = cfg.n;
         document.getElementById('char-msg').innerHTML = list[0];
 
+        // 音声開始（一度だけ初期化）
         window.startAudio = function() {
-            if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-            play();
+            if (!ctx) {
+                ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            playTick();
         };
 
-        function play() {
-            if (!ctx) return;
-            const o = ctx.createOscillator(); const g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = cfg.f; g.gain.value
+        function playTick() {
+            if (!ctx || ctx.state === 'suspended') {
+                if(ctx) ctx.resume();
+                if(!ctx) return;
+            }
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.value = cfg.f;
+            g.gain.setValueAtTime(0.05, ctx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            o.start();
+            o.stop(ctx.currentTime + 0.1);
+        }
+
+        function rotate() {
+            i = (i + 1) % list.length;
+            const container = document.getElementById('msg-container');
+            const box = document.getElementById('char-msg');
+            
+            // アニメーションのリセット（一度消してすぐ出す）
+            container.classList.remove('fade');
+            void container.offsetWidth; 
+            
+            box.innerHTML = list[i];
+            container.classList.add('fade');
+            
+            // 音を鳴らす（クリック済みなら鳴る）
+            if (ctx) playTick();
+        }
+
+        // 5秒おきに回転
+        setInterval(rotate, 5000);
+    })();
+</script>
+</body>
+</html>
