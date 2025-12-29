@@ -8,22 +8,18 @@
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; height: 100vh; transition: background 0.5s; 
-            cursor: pointer; overflow: hidden; font-family: serif;
+            cursor: pointer; overflow: hidden; font-family: serif; background-color: #f8f9fa;
         }
         #audio-hint { font-size: 10px; margin-bottom: 10px; letter-spacing: 1px; color: #ccc; }
         #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; }
         
-        /* 各モードの設定 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-0 #card { border-left: 5px solid #000; }
-        
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
         body.mode-1 #card { background: #000; border: 1px solid #00ff41; border-left: 5px solid #00ff41; }
-        
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
         body.mode-2 #card { background: #222; border: 1px solid #d4af37; border-left: 5px solid #d4af37; }
 
-        /* アニメーション用クラス */
         .fade-in { animation: fadeInAnim 0.8s ease-in forwards; }
         @keyframes fadeInAnim { 
             from { opacity: 0; transform: translateY(5px); } 
@@ -42,11 +38,11 @@
     <div id="audio-hint">TAP TO START SOUND</div>
 
     <div id="card">
-        <div class="date" id="mode-name">Loading...</div>
+        <div class="date" id="mode-name">Message</div>
         <div id="fade-target">
-            <div class="msg-box" id="char-msg"></div>
+            <div class="msg-box" id="char-msg">読み込み中...</div>
             <div class="signature-logo">
-                <img src="https://github.com/MiKey-Log.png" alt="MikeyLog Logo">
+                <img src="https://github.com/MiKey-Log.png" alt="Logo">
             </div>
         </div>
     </div>
@@ -60,66 +56,3 @@
             messages: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、自分の存在意義を疑う。", "傘を持ってきた日に限って、雨が降らない呪い。", "スーパーのレジ、隣の列の方が早い気がする。", "昨日の晩ごはんが思い出せず、自分に絶望している。"]
         },
         {
-            name: "Dark / 裏の独り言", freq: 440,
-            messages: ["今、あなたの後ろに誰か立っていますか？……気のせいか。", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "ここだけの話、明日の運勢はあなた次第です。"]
-        },
-        {
-            name: "Gold / 大人の格言風", freq: 1800,
-            messages: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "充電の残量は、心の余裕の残量である。", "美味しいものは、だいたい茶色い。", "人生にリハーサルはないが、休憩時間はいくらでもある。"]
-        }
-    ];
-
-    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
-    const config = modeConfigs[modeIdx];
-    document.body.classList.add('mode-' + modeIdx);
-    document.getElementById('mode-name').textContent = config.name;
-
-    let i = 0;
-    let audioContext = null;
-
-    function enableAudio() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            document.getElementById('audio-hint').style.display = 'none';
-            playTickSound();
-        }
-    }
-
-    function playTickSound() {
-        if (!audioContext) return;
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain); gain.connect(audioContext.destination);
-        osc.frequency.setValueAtTime(config.freq, audioContext.currentTime);
-        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
-        osc.start(); osc.stop(audioContext.currentTime + 0.1);
-    }
-
-    function rotate() {
-        const target = document.getElementById('fade-target');
-        const msgBox = document.getElementById('char-msg');
-        
-        // アニメーションリセット
-        target.classList.remove('fade-in');
-        void target.offsetWidth; 
-
-        // メッセージ作成
-        let currentMsg = config.messages[i];
-        if (i === config.messages.length - 1) currentMsg += lastPhrase;
-        
-        msgBox.innerHTML = currentMsg;
-        target.classList.add('fade-in');
-        
-        if (audioContext) playTickSound();
-        i = (i + 1) % config.messages.length;
-    }
-
-    // すべての準備ができたら開始
-    document.addEventListener("DOMContentLoaded", () => {
-        rotate();
-        setInterval(rotate, 5000);
-    });
-</script>
-</body>
-</html>
