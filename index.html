@@ -13,7 +13,6 @@
         #audio-hint { font-size: 10px; margin-bottom: 10px; letter-spacing: 1px; color: #ccc; position: absolute; top: 20px; }
         #card { text-align: center; padding: 40px; width: 80%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: #fff; }
         
-        /* 各モード */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-0 #card { border-left: 5px solid #000; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; font-family: monospace; }
@@ -43,8 +42,8 @@
 
     <div id="card">
         <div class="date" id="mode-name">Message</div>
-        <div id="fade-target">
-            <div class="msg-box" id="char-msg"></div>
+        <div id="fade-target" class="fade-in">
+            <div class="msg-box" id="char-msg">「後でやる」の「後」が、まだ来ない。</div>
             <div class="signature-logo">
                 <img src="https://github.com/MiKey-Log.png" alt="Logo">
             </div>
@@ -52,7 +51,6 @@
     </div>
 
 <script>
-    // 6番目の特別画面
     const finalComment = "<div class='special-phrase'>いい加減に仕事しようっかぁ～<span class='go-anzen'>ご安全に！</span></div>";
 
     const modeConfigs = [
@@ -77,3 +75,7 @@
             ]
         },
         {
+            name: "Gold / 大人の格言風", freq: 1800,
+            messages: [
+                "贅沢とは、何もしない時間に名前をつけることだ。",
+                "迷ったら、一番面白い方を選べば
