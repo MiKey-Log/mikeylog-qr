@@ -8,14 +8,15 @@
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
             align-items: center; height: 100vh; font-family: sans-serif;
-            background-color: #f8f9fa; color: #333; transition: background 0.3s;
+            background-color: #f8f9fa; color: #333; transition: background 0.5s;
             cursor: pointer; overflow: hidden;
         }
         #card { 
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        /* モード切替 */
+        /* 各モード（JSでクラス付与） */
+        body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
         body.mode-2 { background-color: #1a1a1a; color: #d4af37; }
@@ -24,86 +25,84 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 21px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* 安定したフェード */
-        .fade { animation: fadeIn 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* 安定したフェードクラス */
+        .fade-in { animation: fadeInEffect 0.5s ease-out; }
+        @keyframes fadeInEffect { from { opacity: 0; } to { opacity: 1; } }
 
         .special { font-size: 24px; font-weight: bold; font-style: italic; }
-        .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; font-style: normal; font-weight: normal; }
+        .go-anzen { display: block; margin-top: 15px; font-size: 19px; color: #ff3b30; font-style: normal; font-weight: normal; }
         body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
-<body onclick="startAudio()">
+<body onclick="initAudio()">
 
     <div id="card">
         <div class="date" id="mode-name">MESSAGE</div>
-        <div id="msg-container">
-            <div id="char-msg" class="msg-box">「明日から本気出す」を、もう3000回は言った。</div>
-        </div>
+        <div id="msg-box" class="msg-box">「明日から本気出す」を、もう3000回は言った。</div>
     </div>
 
 <script>
-    (function() {
-        const final = `<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>`;
-        const modes = [
-            { n: "Normal", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "幸せのハードルを下げすぎて、地面に埋まっている。"] },
-            { n: "Dark", f: 440, m: ["あなたが無駄にした今日は、誰かが生きたかった明日……とか、重いよ。", "鏡を見るたび、知らない人がこっちを見ている。", "「普通」って言葉は、誰が作った凶器なんだろう。", "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。"] },
-            { n: "Gold", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "充電の残量は、心の余裕の残量である。", "自由とは、嫌いな奴に「NO」と言える貯金額のこと。", "休息は、次に跳ぶための助走ではなく、ただの休息でいい。"] }
-        ];
+    // 1. データ定義
+    const finalScreen = '<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>';
+    const modes = [
+        { name: "Normal", freq: 1200, msgs: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "幸せのハードルを下げすぎて、地面に埋まっている。"] },
+        { name: "Dark", freq: 440, msgs: ["あなたが無駄にした今日は、誰かが生きたかった明日……とか重い。", "鏡を見るたび、知らない人がこっちを見ている気がする。", "「普通」って言葉は、誰が作った凶器なんだろう。", "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。"] },
+        { name: "Gold", freq: 1800, msgs: ["贅沢とは、何もしない時間に名前をつけることだ。", "充電の残量は、心の余裕の残量である。", "自由とは、嫌いな奴に「NO」と言える貯金額のこと。", "休息は、次に跳ぶための助走ではなく、ただの休息でいい。"] }
+    ];
 
-        const cfg = modes[Math.floor(Math.random() * modes.length)];
-        const list = [...cfg.m, final];
-        let i = 0;
-        let ctx = null;
+    // 2. 状態管理
+    let audioCtx = null;
+    let currentIndex = 0;
+    const selectedModeIdx = Math.floor(Math.random() * modes.length);
+    const config = modes[selectedModeIdx];
+    const displayList = [...config.msgs, finalScreen];
 
-        // 初期セットアップ
-        document.body.className = 'mode-' + modes.indexOf(cfg);
-        document.getElementById('mode-name').innerText = cfg.n;
-        document.getElementById('char-msg').innerHTML = list[0];
+    // 3. 初期表示
+    const body = document.body;
+    const modeLabel = document.getElementById('mode-name');
+    const msgArea = document.getElementById('msg-box');
 
-        // 音声開始（一度だけ初期化）
-        window.startAudio = function() {
-            if (!ctx) {
-                ctx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+    if (body && modeLabel && msgArea) {
+        body.className = 'mode-' + selectedModeIdx;
+        modeLabel.innerText = config.name;
+        msgArea.innerHTML = displayList[0];
+    }
+
+    // 4. 音声
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        playTick();
+    }
+
+    function playTick() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = config.freq;
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    // 5. 回転（5秒ごと）
+    function rotate() {
+        currentIndex = (currentIndex + 1) % displayList.length;
+        if (msgArea) {
+            msgArea.classList.remove('fade-in');
+            void msgArea.offsetWidth; // 強制リフロー
+            msgArea.innerHTML = displayList[currentIndex];
+            msgArea.classList.add('fade-in');
             playTick();
-        };
-
-        function playTick() {
-            if (!ctx || ctx.state === 'suspended') {
-                if(ctx) ctx.resume();
-                if(!ctx) return;
-            }
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.connect(g);
-            g.connect(ctx.destination);
-            o.frequency.value = cfg.f;
-            g.gain.setValueAtTime(0.05, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            o.start();
-            o.stop(ctx.currentTime + 0.1);
         }
+    }
 
-        function rotate() {
-            i = (i + 1) % list.length;
-            const container = document.getElementById('msg-container');
-            const box = document.getElementById('char-msg');
-            
-            // アニメーションのリセット（一度消してすぐ出す）
-            container.classList.remove('fade');
-            void container.offsetWidth; 
-            
-            box.innerHTML = list[i];
-            container.classList.add('fade');
-            
-            // 音を鳴らす（クリック済みなら鳴る）
-            if (ctx) playTick();
-        }
-
-        // 5秒おきに回転
-        setInterval(rotate, 5000);
-    })();
+    setInterval(rotate, 5000);
 </script>
 </body>
 </html>
