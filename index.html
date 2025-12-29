@@ -14,9 +14,9 @@
         #card { 
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
         }
-        /* モード別カラースキーム */
+        
+        /* 各モード */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
@@ -24,17 +24,18 @@
         body.mode-2 #card { background: #222; border-left: 6px solid #d4af37; }
 
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
-        
-        /* メッセージエリア */
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* ロゴエリア（独立） */
-        .logo-area { margin-top: 30px; opacity: 0.8; }
-        .logo-area img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid currentColor; }
+        /* ロゴ：ここを確実に表示させる設定 */
+        .logo-area { margin-top: 30px; display: flex; justify-content: center; }
+        .logo-area img { 
+            width: 100px; height: 100px; border-radius: 50%; 
+            border: 2px solid currentColor; background: #eee;
+            object-fit: cover;
+        }
 
-        /* アニメーション */
-        .fade-in { animation: fadeInEffect 0.5s ease-out forwards; }
-        @keyframes fadeInEffect { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .fade { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .special { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; font-style: normal; font-weight: normal; }
@@ -46,12 +47,14 @@
     <div id="card">
         <div class="date" id="mode-name">MESSAGE</div>
         
-        <div id="msg-container" class="fade-in">
+        <div id="msg-container" class="fade">
             <div id="char-msg" class="msg-box">「明日から本気出す」を、もう3000回は言った。</div>
         </div>
 
         <div class="logo-area">
-            <img src="https://github.com/MiKey-Log.png" alt="Logo">
+            <img src="https://avatars.githubusercontent.com/u/190809794?v=4" 
+                 onerror="this.src='https://github.com/MiKey-Log.png'"
+                 alt="MiKey-Log">
         </div>
     </div>
 
@@ -70,7 +73,6 @@
         const config = modes[modeIdx];
         const displayList = [...config.msgs, finalScreen];
 
-        // 初期設定
         document.body.className = 'mode-' + modeIdx;
         document.getElementById('mode-name').innerText = config.name;
         document.getElementById('char-msg').innerHTML = displayList[0];
@@ -97,14 +99,15 @@
             const container = document.getElementById('msg-container');
             const box = document.getElementById('char-msg');
             
-            container.classList.remove('fade-in');
-            void container.offsetWidth; // リフロー強制
-            
+            container.classList.remove('fade');
+            void container.offsetWidth; 
             box.innerHTML = displayList[currentIndex];
-            container.classList.add('fade-in');
-            playTick();
+            container.classList.add('fade');
+            if(audioCtx) playTick();
         }
 
         setInterval(rotate, 5000);
     })();
-</
+</script>
+</body>
+</html>
