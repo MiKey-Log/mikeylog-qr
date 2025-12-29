@@ -30,7 +30,6 @@
         .date { font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; opacity: 0.7; }
         .msg-box { font-size: 20px; font-weight: 500; line-height: 1.8; min-height: 140px; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* 特別コメントのスタイル */
         .special-phrase { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 10px; font-size: 18px; font-weight: normal; opacity: 0.8; }
 
@@ -53,7 +52,7 @@
     </div>
 
 <script>
-    // 最後の特別画面用メッセージ
+    // 6番目の特別画面
     const finalComment = "<div class='special-phrase'>いい加減に仕事しようっかぁ～<span class='go-anzen'>ご安全に！</span></div>";
 
     const modeConfigs = [
@@ -78,18 +77,3 @@
             ]
         },
         {
-            name: "Gold / 大人の格言風", freq: 1800,
-            messages: [
-                "贅沢とは、何もしない時間に名前をつけることだ。",
-                "迷ったら、一番面白い方を選べばいい。たぶん。",
-                "充電の残量は、心の余裕の残量である。",
-                "美味しいものは、だいたい茶色い。",
-                "人生にリハーサルはないが、休憩時間はいくらでもある。"
-            ]
-        }
-    ];
-
-    // 初期化：ランダムでモード決定
-    const modeIdx = Math.floor(Math.random() * modeConfigs.length);
-    const config = modeConfigs[modeIdx];
-    document
