@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiKey Log - Ultimate Stable</title>
+    <title>MiKey Log - Final System</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; height: 100vh; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+            align-items: center; height: 100vh; font-family: sans-serif;
             background-color: #f8f9fa; color: #333; transition: background 0.5s;
             cursor: pointer; overflow: hidden;
         }
@@ -15,8 +15,6 @@
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        
-        /* モード別配色 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
@@ -26,24 +24,14 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
-        /* 🎨 ロゴをプログラムで直接描画（画像タグを使いません） */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .mikey-logo-actual {
-            background: #00ff41; /* ステッカーの緑枠 */
-            padding: 4px;
-            border-radius: 8px;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        /* 🎨 ロゴをプログラムで直接描画（画像タグを使いません） */
+        .mikey-logo {
+            background: #00ff41; padding: 4px; border-radius: 8px; display: inline-block;
         }
         .mikey-logo-inner {
-            background: #000; /* ステッカーの黒背景 */
-            color: #fff;      /* 白文字 */
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            border: 1.5px solid #00ff41;
+            background: #000; color: #fff; padding: 10px 20px; border-radius: 5px;
+            font-size: 22px; font-weight: 900; border: 1.5px solid #00ff41;
             font-family: 'Arial Black', sans-serif;
         }
 
@@ -51,22 +39,17 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .special { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; }
-        body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
 <body onclick="activate()">
 
     <div id="card">
         <div class="date" id="mode-name">SYSTEM READY</div>
-        
         <div id="msg-container">
             <div id="char-msg" class="msg-box">画面をタップして<br>MiKey Logを開始</div>
         </div>
-
         <div class="logo-area">
-            <div class="mikey-logo-actual">
-                <div class="mikey-logo-inner">MiKey Log</div>
-            </div>
+            <div class="mikey-logo"><div class="mikey-logo-inner">MiKey Log</div></div>
         </div>
     </div>
 
@@ -74,9 +57,9 @@
     (function() {
         const final = '<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>';
         const modes = [
-            { n: "Normal / 日常", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "スーパーのレジ、隣の列の方が早い気がする。"] },
-            { n: "Dark / 独白", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "鏡を見るたび、知らない人がこっちを見ている気がする。"] },
-            { n: "Gold / 真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。", "完璧を目指すより、まずは終わらせる勇気を。"] }
+            { n: "Normal / 日常", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。"] },
+            { n: "Dark / 独白", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。"] },
+            { n: "Gold / 真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "完璧を目指すより、まずは終わらせる勇気を。"] }
         ];
 
         let ctx = null;
@@ -87,27 +70,18 @@
 
         document.body.className = 'mode-' + mIdx;
 
+        // ⚠️ 画像読み込みを待たずに、タップされたら即座に動くように修正
         window.activate = function() {
             if (!ctx) {
-                ctx = new (window.AudioContext || window.webkitAudioContext)();
-                document.getElementById('mode-name').innerText = cfg.n;
-                rotate();
-                setInterval(rotate, 5000);
+                try {
+                    ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    document.getElementById('mode-name').innerText = cfg.n;
+                    rotate();
+                    setInterval(rotate, 5000);
+                } catch(e) { console.error(e); }
             }
-            if (ctx.state === 'suspended') ctx.resume();
-            playTick();
+            if (ctx && ctx.state === 'suspended') ctx.resume();
         };
-
-        function playTick() {
-            if (!ctx) return;
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = cfg.f;
-            g.gain.setValueAtTime(0.04, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            o.start(); o.stop(ctx.currentTime + 0.1);
-        }
 
         function rotate() {
             const box = document.getElementById('char-msg');
@@ -116,7 +90,17 @@
             void container.offsetWidth; 
             box.innerHTML = list[idx];
             container.classList.add('fade');
-            playTick();
+            
+            // 音を鳴らす処理
+            if(ctx) {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = cfg.f;
+                g.gain.setValueAtTime(0.04, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                o.start(); o.stop(ctx.currentTime + 0.1);
+            }
             idx = (idx + 1) % list.length;
         }
     })();
