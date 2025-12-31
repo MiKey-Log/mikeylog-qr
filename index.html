@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mikeylog - Stable</title>
+    <title>MiKey Log</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
@@ -15,7 +15,7 @@
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        
+        /* モード別配色 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
@@ -25,11 +25,19 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
+        /* アイコン：画像を使わず、文字で「ML」ロゴを作成 */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .logo-area img { width: 100px; height: 100px; border-radius: 12px; object-fit: contain; }
+        .m-logo {
+            width: 80px; height: 80px; background: #000; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; border-radius: 15px;
+            border: 2px solid currentColor;
+        }
+        body.mode-1 .m-logo { background: #00ff41; color: #000; }
+        body.mode-2 .m-logo { background: #d4af37; color: #000; }
 
-        .fade { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .fade { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .special { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; }
     </style>
@@ -37,22 +45,23 @@
 <body>
 
     <div id="card">
-        <div class="date" id="mode-name">MESSAGE</div>
-        <div id="msg-container" class="fade">
-            <div id="char-msg" class="msg-box">Loading...</div>
+        <div class="date" id="mode-name">MIKEY LOG</div>
+        <div id="msg-container">
+            <div id="char-msg" class="msg-box">起動中...</div>
         </div>
         <div class="logo-area">
-            <img src="https://avatars.githubusercontent.com/u/190809794?v=4" alt="MiKey Log">
+            <div class="m-logo">ML</div>
         </div>
     </div>
 
 <script>
-    (function() {
+    // 確実に動作させるため、読み込み完了後に実行
+    window.onload = function() {
         const final = '<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>';
         const modes = [
-            { n: "Normal", m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "部屋の乱れは心の乱れ。"] },
-            { n: "Dark", m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "逃げ道があるから、迷路は完成するんだ。"] },
-            { n: "Gold", m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。", "完璧を目指すより、まずは終わらせる勇気を。"] }
+            { n: "Normal / 日常", m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "部屋の乱れは心の乱れ。"] },
+            { n: "Dark / 独白", m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "逃げ道があるから、迷路は完成するんだ。"] },
+            { n: "Gold / 真実", m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "完璧を目指すより、まずは終わらせる勇気を。"] }
         ];
 
         let idx = 0;
@@ -60,6 +69,7 @@
         const cfg = modes[mIdx];
         const list = [...cfg.m, final];
 
+        // 画面のセットアップ
         document.body.className = 'mode-' + mIdx;
         document.getElementById('mode-name').innerText = cfg.n;
 
@@ -67,6 +77,7 @@
             const box = document.getElementById('char-msg');
             const container = document.getElementById('msg-container');
             
+            // アニメーションのリセット
             container.classList.remove('fade');
             void container.offsetWidth; // 強制リフロー
             
@@ -76,10 +87,10 @@
             idx = (idx + 1) % list.length;
         }
 
-        // 起動時にすぐ実行し、5秒ごとに繰り返す（音なしで安定）
+        // 初回実行とループ開始
         rotate();
         setInterval(rotate, 5000);
-    })();
+    };
 </script>
 </body>
 </html>
