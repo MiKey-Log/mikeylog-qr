@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiKey Log - Final</title>
+    <title>MiKey Log - Authentic</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; height: 100vh; font-family: sans-serif;
+            align-items: center; height: 100vh; font-family: "Helvetica Neue", Arial, sans-serif;
             background-color: #f8f9fa; color: #333; transition: background 0.5s;
             cursor: pointer; overflow: hidden;
         }
@@ -15,6 +15,8 @@
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        
+        /* モード別配色 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
@@ -24,17 +26,29 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
+        /* 🎨 ロゴ再現エリア：ステッカーのデザインを再現 */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .logo-area img { 
-            width: 120px; height: auto; border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        .mikey-sticker {
+            background-color: #00ff41; /* 外枠の緑 */
+            padding: 4px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .mikey-inner {
+            background-color: #000; /* 内側の黒 */
+            color: #fff;            /* 文字の白 */
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 18px;
+            letter-spacing: 1px;
+            border: 1px solid #00ff41;
         }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .special { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; }
-        body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
 <body onclick="activate()">
@@ -44,8 +58,11 @@
         <div id="msg-container">
             <div id="char-msg" class="msg-box">画面をタップして<br>MiKey Logを開始</div>
         </div>
+
         <div class="logo-area">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAAsTAAALEwEAmpwYAAADlElEQVR4nO3ba2hbdRyH8X9uXdq0S9ul27quY66O6ZyD6pwhThFEfCHig6KIIn4QfCHig6KIIoog+EHEByI+KIooIuID8YmIIoogU8d07tK1Xbu0XdqkaZf08Ym7Y63Idm3S9HzP+X7Bf7Y5v5ycLyc5OUnSNA0AAMBfFfUCAADA/0OBAAAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQAIBQIAIBQIAIBQIAIBQIAIBQAIAv/AnV29nbeC7e9wAAAABJRU5ErkJggg==" alt="MiKey Log">
+            <div class="mikey-sticker">
+                <div class="mikey-inner">MiKey Log</div>
+            </div>
         </div>
     </div>
 
@@ -66,7 +83,6 @@
 
         document.body.className = 'mode-' + mIdx;
 
-        // 画面を一度クリックした瞬間にすべてを動かす
         window.activate = function() {
             if (!ctx) {
                 ctx = new (window.AudioContext || window.webkitAudioContext)();
