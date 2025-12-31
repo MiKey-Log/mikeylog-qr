@@ -14,6 +14,7 @@
         #card { 
             text-align: center; padding: 40px; width: 85%; max-width: 420px; 
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         body.mode-0 { background-color: #f8f9fa; color: #333; }
@@ -25,12 +26,12 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
+        /* ロゴエリアのスタイル */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
         .logo-area img { 
-            width: 100px; height: 100px; 
+            width: 120px; height: auto; 
             border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
@@ -41,75 +42,18 @@
         body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
-<body onclick="initAudio()">
+<body onclick="startAll()">
 
     <div id="card">
-        <div class="date" id="mode-name">MESSAGE</div>
+        <div class="date" id="mode-name">LOADING...</div>
         <div id="msg-container">
-            <div id="char-msg" class="msg-box">タップして開始</div>
+            <div id="char-msg" class="msg-box">画面をタップして<br>MiKey Logを開始</div>
         </div>
         <div class="logo-area">
-            <img id="logo-img" src="https://avatars.githubusercontent.com/u/190809794?v=4&t=1" alt="MiKey Log">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAAsTAAALEwEAmpwYAAADlElEQVR4nO3ba2hbdRyH8X9uXdq0S9ul27quY66O6ZyD6pwhThFEfCHig6KIIn4QfCHig6KIIoog+EHEByI+KIooIuID8YmIIoogU8d07tK1Xbu0XdqkaZf08Ym7Y63Idm3S9HzP+X7Bf7Y5v5ycLyc5OUnSNA0AAMBfFfUCAADA/0OBAAAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQIAIBQAIBQIAIBQIAIBQIAIBQIAIBQAIAv/AnV29nbeC7e9wAAAABJRU5ErkJggg==" alt="MiKey Log">
         </div>
     </div>
 
 <script>
     (function() {
-        const final = '<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>';
-        const modes = [
-            { n: "Normal / 日常", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "スーパーのレジ、隣の列の方が早い気がする。", "100円ショップで、結局3000円使ってしまう謎。", "傘を持ってきた日に限って、雨が降らない呪い。", "部屋の乱れは心の乱れ。今の私の心、たぶん密林。", "正解を探しているうちに、問題の方を忘れてしまった。", "昨日の晩ごはんが思い出せず、自分に絶望している。", "「期間限定」という言葉に、何度人生を狂わされたか。"] },
-            { n: "Dark / 独白", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "このログを読んでいるのは、世界であなた一人だけかもしれない。", "あなたが無駄にした今日は、誰かが生きたかった明日……とか重い。", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "鏡を見るたび、知らない人がこっちを見ている気がする。", "深夜の冷蔵庫の音、あれ実は会話してるらしいですよ。", "「普通」って言葉は、誰が作った凶器なんだろう。", "逃げ道があるから、迷路は完成するんだ。", "深淵をのぞく時、深淵もまた「仕事しろよ」と言っている。", "ここだけの話、明日の運勢はあなた次第です。"] },
-            { n: "Gold / 真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "完璧を目指すより、まずは終わらせる勇気を。", "充電の残量は、心の余裕の残量である。", "大人になると、ご褒美を自分で買わなきゃいけないのが辛い。", "美味しいものは、だいたい茶色い。", "才能がないんじゃない、まだ本気でサボってないだけだ。", "自由とは、嫌いな奴に「NO」と言える貯金額のこと。", "休息は、次に跳ぶための助走ではなく、ただの休息でいい。", "人生にリハーサルはないが、休憩時間はいくらでもある。"] }
-        ];
-
-        let ctx = null;
-        let idx = 0;
-        const mIdx = Math.floor(Math.random() * modes.length);
-        const cfg = modes[mIdx];
-        const list = [...cfg.m, final];
-
-        // 初期化
-        document.body.className = 'mode-' + mIdx;
-        document.getElementById('mode-name').innerText = cfg.n;
-        // 画像URLにタイムスタンプを付与してユンボを強制排除
-        document.getElementById('logo-img').src = "https://avatars.githubusercontent.com/u/190809794?v=4&t=" + new Date().getTime();
-
-        window.initAudio = function() {
-            if (!ctx) {
-                ctx = new (window.AudioContext || window.webkitAudioContext)();
-                rotate(); // 最初のメッセージを表示
-                setInterval(rotate, 5000); // 5秒ごとに切り替え開始
-            }
-            if (ctx.state === 'suspended') ctx.resume();
-            tick();
-        };
-
-        function tick() {
-            if (!ctx) return;
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = cfg.f;
-            g.gain.setValueAtTime(0.05, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            o.start(); o.stop(ctx.currentTime + 0.1);
-        }
-
-        function rotate() {
-            const box = document.getElementById('char-msg');
-            const container = document.getElementById('msg-container');
-            
-            // アニメーションのリセット
-            container.classList.remove('fade');
-            void container.offsetWidth; 
-            
-            box.innerHTML = list[idx];
-            container.classList.add('fade');
-            
-            if(ctx) tick();
-            idx = (idx + 1) % list.length;
-        }
-    })();
-</script>
-</body>
-</html>
+        const final = '<div class="special">いい
