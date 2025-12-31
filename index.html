@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiKey Log - No Image version</title>
+    <title>MiKey Log - Final System</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
@@ -26,43 +26,35 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
-        /* 🎨 ロゴ再現：画像タグを使わずにステッカーを作る */
+        /* ロゴエリア：GitHubから本物のロゴを読み込む */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .mikey-box {
-            background: #00ff41; /* ステッカーの緑のフチ */
-            padding: 3px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        .mikey-text {
-            background: #000; /* ステッカーの黒背景 */
-            color: #fff;      /* ステッカーの白文字 */
-            padding: 8px 18px;
-            border-radius: 4px;
-            font-family: 'Arial Black', Gadget, sans-serif;
-            font-size: 18px;
-            border: 1px solid #00ff41;
-            text-transform: none;
+        .logo-area img { 
+            width: 120px; height: auto; 
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            /* 画像が読み込めない時の「？」を防ぐ */
+            background: #eee;
         }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .special { font-size: 22px; font-weight: bold; font-style: italic; }
         .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; }
+        body.mode-1 .go-anzen { color: #00ff41; }
     </style>
 </head>
 <body onclick="activate()">
 
     <div id="card">
         <div class="date" id="mode-name">TAP TO START</div>
+        
         <div id="msg-container">
             <div id="char-msg" class="msg-box">画面をタップして<br>MiKey Logを開始</div>
         </div>
 
         <div class="logo-area">
-            <div class="mikey-box">
-                <div class="mikey-text">MiKey Log</div>
-            </div>
+            <img id="main-logo" src="https://avatars.githubusercontent.com/u/190809794?v=4" alt="MiKey Log">
         </div>
     </div>
 
@@ -70,9 +62,9 @@
     (function() {
         const final = '<div class="special">いい加減に仕事しようっかぁ～<span class="go-anzen">ご安全に！</span></div>';
         const modes = [
-            { n: "Normal / 日常", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "部屋の乱れは心の乱れ。"] },
-            { n: "Dark / 独白", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "逃げ道があるから、迷路は完成するんだ。"] },
-            { n: "Gold / 真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。", "完璧を目指すより、まずは終わらせる勇気を。"] }
+            { n: "Normal / 日常", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "自動ドアに無視されると、存在意義を疑う。", "「明日から本気出す」を、もう3000回は言った。", "スーパーのレジ、隣の列の方が早い気がする。", "100円ショップで、結局3000円使ってしまう謎。"] },
+            { n: "Dark / 独白", f: 440, m: ["今、あなたの後ろに誰か立っていますか？", "スマホを覗き込んでいる時、スマホもあなたを覗いている。", "鏡を見るたび、知らない人がこっちを見ている気がする。", "逃げ道があるから、迷路は完成するんだ。"] },
+            { n: "Gold / 真実", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。", "迷ったら、一番面白い方を選べばいい。たぶん。", "完璧を目指すより、まずは終わらせる勇気を。", "充電の残量は、心の余裕の残量である。"] }
         ];
 
         let ctx = null;
@@ -81,41 +73,24 @@
         const cfg = modes[mIdx];
         const list = [...cfg.m, final];
 
+        // 初期設定
         document.body.className = 'mode-' + mIdx;
+        
+        // 強制的に最新画像を読み込む処理
+        const logo = document.getElementById('main-logo');
+        logo.src = logo.src + "&t=" + new Date().getTime();
 
         window.activate = function() {
             if (!ctx) {
+                // 音声コンテキストの開始
                 ctx = new (window.AudioContext || window.webkitAudioContext)();
                 document.getElementById('mode-name').innerText = cfg.n;
                 rotate();
                 setInterval(rotate, 5000);
             }
             if (ctx.state === 'suspended') ctx.resume();
-            playTick();
+            playBeep();
         };
 
-        function playTick() {
-            if (!ctx) return;
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.connect(g); g.connect(ctx.destination);
-            o.frequency.value = cfg.f;
-            g.gain.setValueAtTime(0.03, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            o.start(); o.stop(ctx.currentTime + 0.1);
-        }
-
-        function rotate() {
-            const box = document.getElementById('char-msg');
-            const container = document.getElementById('msg-container');
-            container.classList.remove('fade');
-            void container.offsetWidth; 
-            box.innerHTML = list[idx];
-            container.classList.add('fade');
-            playTick();
-            idx = (idx + 1) % list.length;
-        }
-    })();
-</script>
-</body>
-</html>
+        function playBeep() {
+            if
