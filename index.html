@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiKey Log - Professional</title>
+    <title>MiKey Log - Local Image</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; height: 100vh; font-family: "Helvetica Neue", Arial, sans-serif;
+            align-items: center; height: 100vh; font-family: sans-serif;
             background-color: #f8f9fa; color: #333; transition: background 0.5s;
             cursor: pointer; overflow: hidden;
         }
@@ -16,7 +16,6 @@
             background: #fff; border-left: 6px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        /* 各モードの配色設定 */
         body.mode-0 { background-color: #f8f9fa; color: #333; }
         body.mode-1 { background-color: #0d0d0d; color: #00ff41; }
         body.mode-1 #card { background: #000; border-left: 6px solid #00ff41; }
@@ -26,53 +25,73 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
+        /* ロゴエリア：あなたのパソコン内の logo.png を表示 */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
         .logo-area img { 
-            width: 140px; height: auto; 
-            border: 2.5px solid #00ff41; 
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            background: #000;
+            width: 150px; height: auto; 
+            border: 2px solid #00ff41; /* 緑の線で囲う */
+            border-radius: 8px;
         }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .special { font-size: 22px; font-weight: bold; font-style: italic; }
-        .go-anzen { display: block; margin-top: 15px; font-size: 18px; color: #ff3b30; }
-        body.mode-1 .go-anzen { color: #00ff41; }
     </style>
-
-    <script>
-        function activate() {
-            const body = document.body;
-            const msg = document.getElementById('char-msg');
-            const modeName = document.getElementById('mode-name');
-
-            // 1. 背景と文字色をマトリックス風に変更
-            body.className = 'mode-1';
-            modeName.innerText = "SYSTEM ACTIVE";
-            
-            // 2. メッセージを書き換え
-            msg.innerHTML = '<div class="fade">認証に成功しました。<br><span class="special">MiKey Log 起動中...</span><br><span class="go-anzen">ご安全に！</span></div>';
-
-            // 3. 演出として2秒後に次の動作（例：アラート表示）
-            setTimeout(() => {
-                console.log("System transition started.");
-                // 必要であれば、ここに次のページへの移動コードを書きます
-                // window.location.href = "https://example.com/next_page";
-            }, 2000);
-        }
-    </script>
 </head>
 <body onclick="activate()">
 
     <div id="card">
-        <div class="date" id="mode-name">READY</div>
-        
+        <div class="date" id="mode-name">SYSTEM START</div>
         <div id="msg-container">
-            <div id="char-msg" class="msg-box">画面をタップして<br>MiKey Logを開始</div>
+            <div id="char-msg" class="msg-box">タップして開始</div>
         </div>
-
         <div class="logo-area">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAAsTAAALEwEAmpwYAAADW0lEQVR4nO3ba2iWdRzH8X9uXdr06NrVdWzrmKtjOuegOmeIUwQRX4j4oCiiaC8EX4j4oCiiaKIoXhD8IOIDooiiOEXEB+ITEUUXQaaO6dyl67p2dZ2mTZo2Se8XfA0vCDWvV7X3XPd9PrBfvpzPP58f8/f7v985SZI0DQAAYL9U9AIAAPh/KBAAAKFAAAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAoAgEAAAgQAAEAo
+            <img src="logo.png" alt="MiKey Log">
+        </div>
+    </div>
+
+<script>
+    (function() {
+        const modes = [
+            { n: "Normal", f: 1200, m: ["「後でやる」の「後」が、まだ来ない。", "明日から本気出す。"] },
+            { n: "Dark", f: 440, m: ["今、あなたの後ろに誰か立っていますか？"] },
+            { n: "Gold", f: 1800, m: ["贅沢とは、何もしない時間に名前をつけることだ。"] }
+        ];
+
+        let ctx = null, idx = 0;
+        const mIdx = Math.floor(Math.random() * modes.length);
+        const cfg = modes[mIdx];
+        const list = [...cfg.m, "ご安全に！"];
+
+        document.body.className = 'mode-' + mIdx;
+
+        window.activate = function() {
+            if (!ctx) {
+                ctx = new (window.AudioContext || window.webkitAudioContext)();
+                rotate();
+                setInterval(rotate, 5000);
+            }
+            if (ctx.state === 'suspended') ctx.resume();
+        };
+
+        function rotate() {
+            const box = document.getElementById('char-msg');
+            const container = document.getElementById('msg-container');
+            container.classList.remove('fade');
+            void container.offsetWidth; 
+            box.innerText = list[idx];
+            container.classList.add('fade');
+            
+            if(ctx) {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = cfg.f;
+                g.gain.setValueAtTime(0.04, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                o.start(); o.stop(ctx.currentTime + 0.1);
+            }
+            idx = (idx + 1) % list.length;
+        }
+    })();
+</script>
+</body>
+</html>
