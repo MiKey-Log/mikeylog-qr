@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiKey Log - Authentic</title>
+    <title>MiKey Log - No Image version</title>
     <style>
         body { 
             margin: 0; display: flex; flex-direction: column; justify-content: center; 
@@ -26,23 +26,23 @@
         .date { font-size: 11px; letter-spacing: 3px; margin-bottom: 25px; opacity: 0.6; text-transform: uppercase; }
         .msg-box { font-size: 20px; font-weight: 600; line-height: 1.7; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         
-        /* 🎨 ロゴ再現エリア：ステッカーのデザインを再現 */
+        /* 🎨 ロゴ再現：画像タグを使わずにステッカーを作る */
         .logo-area { margin-top: 30px; display: flex; justify-content: center; }
-        .mikey-sticker {
-            background-color: #00ff41; /* 外枠の緑 */
-            padding: 4px;
-            border-radius: 8px;
+        .mikey-box {
+            background: #00ff41; /* ステッカーの緑のフチ */
+            padding: 3px;
+            border-radius: 6px;
             display: inline-block;
         }
-        .mikey-inner {
-            background-color: #000; /* 内側の黒 */
-            color: #fff;            /* 文字の白 */
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-family: 'Arial Black', sans-serif;
+        .mikey-text {
+            background: #000; /* ステッカーの黒背景 */
+            color: #fff;      /* ステッカーの白文字 */
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-family: 'Arial Black', Gadget, sans-serif;
             font-size: 18px;
-            letter-spacing: 1px;
             border: 1px solid #00ff41;
+            text-transform: none;
         }
 
         .fade { animation: fadeIn 0.6s ease-out forwards; }
@@ -60,8 +60,8 @@
         </div>
 
         <div class="logo-area">
-            <div class="mikey-sticker">
-                <div class="mikey-inner">MiKey Log</div>
+            <div class="mikey-box">
+                <div class="mikey-text">MiKey Log</div>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@
             const g = ctx.createGain();
             o.connect(g); g.connect(ctx.destination);
             o.frequency.value = cfg.f;
-            g.gain.setValueAtTime(0.05, ctx.currentTime);
+            g.gain.setValueAtTime(0.03, ctx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
             o.start(); o.stop(ctx.currentTime + 0.1);
         }
